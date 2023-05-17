@@ -1,0 +1,22 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+  datasource:
+    url: jdbc:mysql://localhost:3306/test
+    password: danglong99
+    username: root
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY_ID}
+    region:
+      static: ${AWS_REGION}
+      auto: false
+aws:
+  s3:
+    bucket: danglong-aws-bucket
