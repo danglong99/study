@@ -8,8 +8,8 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
@@ -29,6 +29,7 @@ public class S3Service {
     this.amazonS3 = amazonS3;
   }
 
+  @Async
   public void upload(String key, MultipartFile file) throws IOException {
     ObjectMetadata metadata = new ObjectMetadata();
     metadata.setContentType(file.getContentType());

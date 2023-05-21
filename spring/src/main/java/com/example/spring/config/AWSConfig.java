@@ -15,7 +15,7 @@ public class AWSConfig {
   @Value("${AWS_ACCESS_KEY_ID}")
   private String accessKey;
 
-  @Value("${AWS_SECRET_ACCESS_KEY_ID}")
+  @Value("${AWS_SECRET_ACCESS_KEY}")
   private String secretKey;
 
   @Value("${AWS_REGION}")
