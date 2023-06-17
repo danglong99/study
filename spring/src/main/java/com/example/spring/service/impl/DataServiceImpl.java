@@ -1,5 +1,6 @@
 package com.example.spring.service.impl;
 
+import com.example.spring.exception.CustomException;
 import com.example.spring.repository.DataRepository;
 import com.example.spring.domain.dto.DataRequestDto;
 import com.example.spring.domain.dto.DataResponseDto;
@@ -8,10 +9,11 @@ import com.example.spring.service.DataService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DataServiceImpl implements DataService {
@@ -25,8 +27,11 @@ public class DataServiceImpl implements DataService {
 
   @Override
   public DataResponseDto getById(Integer id) {
-    DataInformation dataInformation = dataRepository.getById(id);
-    return modelMapper().map(dataInformation, DataResponseDto.class);
+    Optional<DataInformation> dataInformationOpt = dataRepository.findById(id);
+    if (dataInformationOpt.isEmpty()) {
+      throw new CustomException(HttpStatus.NOT_FOUND, "Data not found");
+    }
+    return modelMapper().map(dataInformationOpt, DataResponseDto.class);
   }
 
   @Override
@@ -36,21 +41,19 @@ public class DataServiceImpl implements DataService {
   }
 
   @Override
-  public DataResponseDto create(DataRequestDto dataRequestDto) {
+  public DataInformation create(DataRequestDto dataRequestDto) {
     DataInformation dataInformation = modelMapper().map(dataRequestDto, DataInformation.class);
-    dataRepository.save(dataInformation);
-    return modelMapper().map(dataInformation, DataResponseDto.class);
+    return dataRepository.save(dataInformation);
   }
 
   @Override
-  public DataResponseDto update(Integer id, DataRequestDto dataRequestDto) {
-    DataInformation dataInformation = dataRepository.getById(id);
-    if (ObjectUtils.isEmpty(dataInformation)) {
-      return null;
+  public DataInformation update(Integer id, DataRequestDto dataRequestDto) throws CustomException {
+    Optional<DataInformation> dataInformationOpt = dataRepository.findById(id);
+    if (dataInformationOpt.isEmpty()) {
+      throw new CustomException(HttpStatus.NOT_FOUND, "Data not found");
     }
-    modelMapper().map(dataRequestDto, dataInformation);
-    dataRepository.save(dataInformation);
-    return modelMapper().map(dataInformation, DataResponseDto.class);
+    modelMapper().map(dataRequestDto, dataInformationOpt);
+    return dataRepository.save(dataInformationOpt.get());
   }
 
   @Override

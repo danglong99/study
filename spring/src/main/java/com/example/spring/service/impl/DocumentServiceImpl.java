@@ -3,11 +3,13 @@ package com.example.spring.service.impl;
 import com.example.spring.domain.dto.DocumentRequestDto;
 import com.example.spring.domain.dto.DocumentResponseDto;
 import com.example.spring.domain.entity.DocumentInformation;
+import com.example.spring.exception.CustomException;
 import com.example.spring.repository.DocumentRepository;
 import com.example.spring.service.DocumentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,9 +29,9 @@ public class DocumentServiceImpl implements DocumentService {
   public DocumentResponseDto getById(String id) {
     Optional<DocumentInformation> documentInformationOpt = documentRepository.findById(id);
     if (documentInformationOpt.isEmpty()) {
-      return null;
+      throw new CustomException(HttpStatus.NOT_FOUND, "Document not found");
     }
-    return modelMapper().map(documentInformationOpt.get(), DocumentResponseDto.class);
+    return documentInformationOpt.map(documentInformation -> modelMapper().map(documentInformation, DocumentResponseDto.class)).orElse(null);
   }
 
   @Override
@@ -39,21 +41,19 @@ public class DocumentServiceImpl implements DocumentService {
   }
 
   @Override
-  public DocumentResponseDto create(DocumentRequestDto documentRequestDto) {
+  public DocumentInformation create(DocumentRequestDto documentRequestDto) {
     DocumentInformation documentInformation = modelMapper().map(documentRequestDto, DocumentInformation.class);
-    documentRepository.save(documentInformation);
-    return modelMapper().map(documentInformation, DocumentResponseDto.class);
+    return documentRepository.save(documentInformation);
   }
 
   @Override
-  public DocumentResponseDto update(String id, DocumentRequestDto documentRequestDto) {
+  public DocumentInformation update(String id, DocumentRequestDto documentRequestDto) {
     Optional<DocumentInformation> documentInformationOpt = documentRepository.findById(id);
     if (documentInformationOpt.isEmpty()) {
-      return null;
+      throw new CustomException(HttpStatus.NOT_FOUND, "Document not found");
     }
     modelMapper().map(documentRequestDto, documentInformationOpt.get());
-    documentRepository.save(documentInformationOpt.get());
-    return modelMapper().map(documentInformationOpt.get(), DocumentResponseDto.class);
+    return documentRepository.save(documentInformationOpt.get());
   }
 
   @Override

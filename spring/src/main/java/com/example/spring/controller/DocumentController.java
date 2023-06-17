@@ -2,6 +2,7 @@ package com.example.spring.controller;
 
 import com.example.spring.domain.dto.DocumentRequestDto;
 import com.example.spring.domain.dto.DocumentResponseDto;
+import com.example.spring.domain.entity.DocumentInformation;
 import com.example.spring.other.CustomAnnotation;
 import com.example.spring.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,13 @@ public class DocumentController {
   }
 
   @PostMapping("")
-  public DocumentResponseDto create(@RequestBody DocumentRequestDto documentRequestDto) {
+  public DocumentInformation create(@RequestBody DocumentRequestDto documentRequestDto) {
     return documentService.create(documentRequestDto);
   }
 
   @PutMapping("/{id}")
   @CustomAnnotation
-  public DocumentResponseDto update(@RequestBody DocumentRequestDto documentRequestDto, @PathVariable String id) {
+  public DocumentInformation update(@RequestBody DocumentRequestDto documentRequestDto, @PathVariable String id) {
     return documentService.update(id, documentRequestDto);
   }
 

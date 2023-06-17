@@ -2,6 +2,7 @@ package com.example.spring.controller;
 
 import com.example.spring.domain.dto.DataRequestDto;
 import com.example.spring.domain.dto.DataResponseDto;
+import com.example.spring.domain.entity.DataInformation;
 import com.example.spring.other.CustomAnnotation;
 import com.example.spring.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,13 @@ public class DataController {
   }
 
   @PostMapping("")
-  public DataResponseDto create(@RequestBody DataRequestDto dataRequestDto) {
+  public DataInformation create(@RequestBody DataRequestDto dataRequestDto) {
     return dataService.create(dataRequestDto);
   }
 
   @PutMapping("/{id}")
   @CustomAnnotation
-  public DataResponseDto update(@RequestBody DataRequestDto dataRequestDto, @PathVariable Integer id) {
+  public DataInformation update(@RequestBody DataRequestDto dataRequestDto, @PathVariable Integer id) {
     return dataService.update(id, dataRequestDto);
   }
 
