@@ -29,7 +29,7 @@ public class DataServiceImpl implements DataService {
   public DataResponseDto getById(Integer id) {
     Optional<DataInformation> dataInformationOpt = dataRepository.findById(id);
     if (dataInformationOpt.isEmpty()) {
-      throw new CustomException(HttpStatus.NOT_FOUND, "Data not found");
+      throw new CustomException(404, HttpStatus.NOT_FOUND, "Data not found");
     }
     return modelMapper().map(dataInformationOpt, DataResponseDto.class);
   }
@@ -50,7 +50,7 @@ public class DataServiceImpl implements DataService {
   public DataInformation update(Integer id, DataRequestDto dataRequestDto) throws CustomException {
     Optional<DataInformation> dataInformationOpt = dataRepository.findById(id);
     if (dataInformationOpt.isEmpty()) {
-      throw new CustomException(HttpStatus.NOT_FOUND, "Data not found");
+      throw new CustomException(404, HttpStatus.NOT_FOUND, "Data not found");
     }
     modelMapper().map(dataRequestDto, dataInformationOpt);
     return dataRepository.save(dataInformationOpt.get());

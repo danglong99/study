@@ -29,7 +29,7 @@ public class DocumentServiceImpl implements DocumentService {
   public DocumentResponseDto getById(String id) {
     Optional<DocumentInformation> documentInformationOpt = documentRepository.findById(id);
     if (documentInformationOpt.isEmpty()) {
-      throw new CustomException(HttpStatus.NOT_FOUND, "Document not found");
+      throw new CustomException(404, HttpStatus.NOT_FOUND, "Document not found");
     }
     return documentInformationOpt.map(documentInformation -> modelMapper().map(documentInformation, DocumentResponseDto.class)).orElse(null);
   }
@@ -50,7 +50,7 @@ public class DocumentServiceImpl implements DocumentService {
   public DocumentInformation update(String id, DocumentRequestDto documentRequestDto) {
     Optional<DocumentInformation> documentInformationOpt = documentRepository.findById(id);
     if (documentInformationOpt.isEmpty()) {
-      throw new CustomException(HttpStatus.NOT_FOUND, "Document not found");
+      throw new CustomException(404, HttpStatus.NOT_FOUND, "Document not found");
     }
     modelMapper().map(documentRequestDto, documentInformationOpt.get());
     return documentRepository.save(documentInformationOpt.get());

@@ -7,9 +7,16 @@ public class CustomException extends RuntimeException {
 
   private final HttpStatus status;
 
-  public CustomException(HttpStatus status, String message) {
+  private final Integer errorCode;
+
+  public CustomException(Integer errorCode, HttpStatus status, String message) {
     super(message);
+    this.errorCode = errorCode;
     this.status = status;
+  }
+
+  public Integer getErrorCode() {
+    return this.errorCode;
   }
 
   public HttpStatus getStatus() {

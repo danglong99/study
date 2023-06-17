@@ -6,10 +6,14 @@ import java.time.Instant;
 
 public class CustomErrorResponse {
 
+  private final Integer errorCode;
   private final HttpStatus status;
   private final String message;
   private final Instant timestamp;
 
+  public Integer getErrorCode() {
+    return errorCode;
+  }
   public HttpStatus getStatus() {
     return status;
   }
@@ -22,7 +26,8 @@ public class CustomErrorResponse {
     return timestamp;
   }
 
-  public CustomErrorResponse(HttpStatus status, String message, Instant timestamp) {
+  public CustomErrorResponse(Integer errorCode, HttpStatus status, String message, Instant timestamp) {
+    this.errorCode = errorCode;
     this.status = status;
     this.message = message;
     this.timestamp = timestamp;
