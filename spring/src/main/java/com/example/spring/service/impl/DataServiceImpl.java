@@ -31,7 +31,7 @@ public class DataServiceImpl implements DataService {
     if (dataInformationOpt.isEmpty()) {
       throw new CustomException(404, HttpStatus.NOT_FOUND, "Data not found");
     }
-    return modelMapper().map(dataInformationOpt, DataResponseDto.class);
+    return modelMapper().map(dataInformationOpt.get(), DataResponseDto.class);
   }
 
   @Override
@@ -52,7 +52,7 @@ public class DataServiceImpl implements DataService {
     if (dataInformationOpt.isEmpty()) {
       throw new CustomException(404, HttpStatus.NOT_FOUND, "Data not found");
     }
-    modelMapper().map(dataRequestDto, dataInformationOpt);
+    modelMapper().map(dataRequestDto, dataInformationOpt.get());
     return dataRepository.save(dataInformationOpt.get());
   }
 

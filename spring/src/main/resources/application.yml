@@ -20,3 +20,6 @@ cloud:
 aws:
   s3:
     bucket: danglong-aws-bucket
+app:
+  jwt:
+    secret: danglong99

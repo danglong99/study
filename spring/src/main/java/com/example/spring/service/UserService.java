@@ -1,7 +1,6 @@
 package com.example.spring.service;
 
 import com.example.spring.domain.entity.UserInformation;
-import com.example.spring.domain.entity.UserPrincipal;
 import com.example.spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +27,7 @@ public class UserService implements UserDetailsService {
     if (userInformation == null) {
       throw new UsernameNotFoundException(username);
     }
-    return new UserPrincipal(userInformation);
+    return userInformation;
   }
 
   public UserInformation register(UserInformation userInformation) {

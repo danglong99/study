@@ -31,7 +31,7 @@ public class DocumentServiceImpl implements DocumentService {
     if (documentInformationOpt.isEmpty()) {
       throw new CustomException(404, HttpStatus.NOT_FOUND, "Document not found");
     }
-    return documentInformationOpt.map(documentInformation -> modelMapper().map(documentInformation, DocumentResponseDto.class)).orElse(null);
+    return modelMapper().map(documentInformationOpt.get(), DocumentResponseDto.class);
   }
 
   @Override
