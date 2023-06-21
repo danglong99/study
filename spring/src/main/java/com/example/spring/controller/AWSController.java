@@ -1,10 +1,12 @@
 package com.example.spring.controller;
 
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.example.spring.aws.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.List;
 
 @RestController
 @RequestMapping("/s3")
@@ -25,18 +27,18 @@ public class AWSController {
     s3Service.upload(file.getOriginalFilename(), file);
   }
 
-  @GetMapping("/download")
-  public void download(@RequestParam("file") String key) {
-    s3Service.download(key);
-  }
-
   @GetMapping("/get")
-  public InputStream get(@RequestParam("file") String key) {
+  public S3Object get(@RequestParam("file") String key) {
     return s3Service.getObject(key);
   }
 
-  @GetMapping("/test")
-  public byte[] test(@RequestParam("file") String key) {
-    return s3Service.getFile(key);
+  @GetMapping("/download")
+  public ResponseEntity<byte[]> download(@RequestParam("file") String key) {
+    return s3Service.download(key);
+  }
+
+  @GetMapping("/list-objects")
+  public List<S3ObjectSummary> listObject() {
+    return s3Service.listObject();
   }
 }
