@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 @RestController
@@ -38,7 +39,12 @@ public class AWSController {
   }
 
   @GetMapping("/list-objects")
-  public List<S3ObjectSummary> listObject() {
+  public List<String> listObject() {
     return s3Service.listObject();
+  }
+
+  @GetMapping("/presigned-url")
+  public URL presignedUrl(@RequestParam String key) {
+    return s3Service.presignedUrl(key);
   }
 }

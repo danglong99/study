@@ -1,7 +1,9 @@
 package com.example.spring.aws;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
@@ -19,11 +21,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class S3Service {
+  private static final long EXPIRE_DURATION = 60 * 60 * 1000;
+
+  private static final Date expiration = new Date();
   private final AmazonS3 amazonS3;
 
   @Value("${aws.s3.bucket}")
@@ -65,8 +72,16 @@ public class S3Service {
     }
   }
 
-  public List<S3ObjectSummary> listObject() {
+  public List<String> listObject() {
     ObjectListing listing = amazonS3.listObjects(bucket);
-    return listing.getObjectSummaries();
+    return listing.getObjectSummaries().stream().map(S3ObjectSummary::getKey).toList();
+  }
+
+  public URL presignedUrl(String key) {
+    expiration.setTime(EXPIRE_DURATION);
+    GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, key)
+        .withMethod(HttpMethod.GET)
+        .withExpiration(expiration);
+    return amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
   }
 }

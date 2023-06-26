@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Component
 public class JwtTokenUtil {
-  private static final long EXPIRE_DURATION = 24 * 60 * 60 * 1000;
+  private static final long EXPIRE_DURATION = 8 * 60 * 60 * 1000;
 
   @Value("${app.jwt.secret}")
   private String SECRET_KEY;
@@ -41,7 +41,6 @@ public class JwtTokenUtil {
     } catch (UnsupportedJwtException ex) {
       System.err.println("JWT is not supported");
     }
-
     return false;
   }
 
