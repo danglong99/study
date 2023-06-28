@@ -11,6 +11,8 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.IOUtils;
 import com.example.spring.exception.CustomException;
 import com.example.spring.utils.ErrorDetail;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,8 @@ import java.util.List;
 
 @Service
 public class S3Service {
+  private static final Logger logger = LogManager.getLogger(S3Service.class);
+
   private static final long EXPIRE_DURATION = 60 * 60 * 1000;
 
   private static final Date expiration = new Date();
@@ -52,6 +56,7 @@ public class S3Service {
       metadata.setContentLength(file.getSize());
       amazonS3.putObject(bucket, key, file.getInputStream(), metadata);
     } catch (CustomException exception) {
+      logger.error("S3 connect failed");
       throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
     }
   }
@@ -60,6 +65,7 @@ public class S3Service {
     try {
       return amazonS3.getObject(bucket, key);
     } catch (CustomException exception) {
+      logger.error("S3 connect failed");
       throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
     }
   }
@@ -89,6 +95,7 @@ public class S3Service {
       ObjectListing listing = amazonS3.listObjects(bucket);
       return listing.getObjectSummaries().stream().map(S3ObjectSummary::getKey).toList();
     } catch (CustomException exception) {
+      logger.error("S3 connect failed");
       throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
     }
   }
@@ -101,6 +108,7 @@ public class S3Service {
           .withExpiration(expiration);
       return amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
     } catch (CustomException exception) {
+      logger.error("S3 connect failed");
       throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
     }
   }

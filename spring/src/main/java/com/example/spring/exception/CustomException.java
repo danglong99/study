@@ -3,7 +3,6 @@ package com.example.spring.exception;
 
 import com.example.spring.utils.ErrorDetail;
 
-
 public class CustomException extends RuntimeException {
 
   private final String status;

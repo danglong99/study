@@ -7,6 +7,8 @@ import com.example.spring.exception.CustomException;
 import com.example.spring.jwt.JwtTokenUtil;
 import com.example.spring.utils.ErrorDetail;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+  private static final Logger logger = LogManager.getLogger(AuthController.class);
   @Autowired(required = false)
   AuthenticationManager authManager;
 
@@ -39,6 +42,7 @@ public class AuthController {
       return new AuthResponseDto(user.getUsername(), accessToken);
 
     } catch (BadCredentialsException ex) {
+      logger.error("User is unauthenticated");
       throw new CustomException(ErrorDetail.UNAUTHENTICATE);
     }
   }

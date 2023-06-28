@@ -7,6 +7,8 @@ import com.example.spring.domain.dto.DataResponseDto;
 import com.example.spring.domain.entity.DataInformation;
 import com.example.spring.service.DataService;
 import com.example.spring.utils.ErrorDetail;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,8 @@ import java.util.Optional;
 
 @Service
 public class DataServiceImpl implements DataService {
+  private static final Logger logger = LogManager.getLogger(DataServiceImpl.class);
+
   @Autowired
   private DataRepository dataRepository;
 
@@ -29,6 +33,7 @@ public class DataServiceImpl implements DataService {
   public DataResponseDto getById(Integer id) {
     Optional<DataInformation> dataInformationOpt = dataRepository.findById(id);
     if (dataInformationOpt.isEmpty()) {
+      logger.error("Data can't be found");
       throw new CustomException(ErrorDetail.DATA_NOT_FOUND);
     }
     return modelMapper().map(dataInformationOpt.get(), DataResponseDto.class);
@@ -50,6 +55,7 @@ public class DataServiceImpl implements DataService {
   public DataInformation update(Integer id, DataRequestDto dataRequestDto) throws CustomException {
     Optional<DataInformation> dataInformationOpt = dataRepository.findById(id);
     if (dataInformationOpt.isEmpty()) {
+      logger.error("Data can't be found");
       throw new CustomException(ErrorDetail.DATA_NOT_FOUND);
     }
     modelMapper().map(dataRequestDto, dataInformationOpt.get());
