@@ -1,20 +1,23 @@
 package com.example.spring.exception;
 
-import org.springframework.http.HttpStatus;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class CustomErrorResponse {
 
-  private final Integer errorCode;
-  private final HttpStatus status;
-  private final String message;
-  private final Instant timestamp;
+  private Integer errorCode;
+  private String status;
+  private String message;
+  private Instant timestamp;
 
   public Integer getErrorCode() {
     return errorCode;
   }
-  public HttpStatus getStatus() {
+  public String getStatus() {
     return status;
   }
 
@@ -26,10 +29,19 @@ public class CustomErrorResponse {
     return timestamp;
   }
 
-  public CustomErrorResponse(Integer errorCode, HttpStatus status, String message, Instant timestamp) {
+  public void setErrorCode(Integer errorCode) {
     this.errorCode = errorCode;
+  }
+
+  public void setStatus(String status) {
     this.status = status;
+  }
+
+  public void setMessage(String message) {
     this.message = message;
+  }
+
+  public void setTimestamp(Instant timestamp) {
     this.timestamp = timestamp;
   }
 }

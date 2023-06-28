@@ -5,9 +5,9 @@ import com.example.spring.domain.dto.AuthResponseDto;
 import com.example.spring.domain.entity.UserInformation;
 import com.example.spring.exception.CustomException;
 import com.example.spring.jwt.JwtTokenUtil;
+import com.example.spring.utils.ErrorDetail;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +39,7 @@ public class AuthController {
       return new AuthResponseDto(user.getUsername(), accessToken);
 
     } catch (BadCredentialsException ex) {
-      throw new CustomException(401, HttpStatus.UNAUTHORIZED, "User is unauthorized");
+      throw new CustomException(ErrorDetail.UNAUTHENTICATE);
     }
   }
 }

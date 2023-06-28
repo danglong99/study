@@ -1,6 +1,5 @@
 package com.example.spring.aws;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
@@ -10,6 +9,8 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.IOUtils;
+import com.example.spring.exception.CustomException;
+import com.example.spring.utils.ErrorDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
@@ -44,14 +46,22 @@ public class S3Service {
 
   @Async
   public void upload(String key, MultipartFile file) throws IOException {
-    ObjectMetadata metadata = new ObjectMetadata();
-    metadata.setContentType(file.getContentType());
-    metadata.setContentLength(file.getSize());
-    amazonS3.putObject(bucket, key, file.getInputStream(), metadata);
+    try {
+      ObjectMetadata metadata = new ObjectMetadata();
+      metadata.setContentType(file.getContentType());
+      metadata.setContentLength(file.getSize());
+      amazonS3.putObject(bucket, key, file.getInputStream(), metadata);
+    } catch (CustomException exception) {
+      throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
+    }
   }
 
   public S3Object getObject(String key) {
-    return amazonS3.getObject(bucket, key);
+    try {
+      return amazonS3.getObject(bucket, key);
+    } catch (CustomException exception) {
+      throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
+    }
   }
 
   public ResponseEntity<byte[]> download(String key) {
@@ -67,21 +77,31 @@ public class S3Service {
       httpHeaders.setContentLength(bytes.length);
       httpHeaders.setContentDispositionFormData("attachment", fileName);
       return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
-    } catch (AmazonServiceException | IOException e) {
-      throw new IllegalStateException("Failed to download the file", e);
+    } catch (CustomException | UnsupportedEncodingException exception) {
+      throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 
   public List<String> listObject() {
-    ObjectListing listing = amazonS3.listObjects(bucket);
-    return listing.getObjectSummaries().stream().map(S3ObjectSummary::getKey).toList();
+    try {
+      ObjectListing listing = amazonS3.listObjects(bucket);
+      return listing.getObjectSummaries().stream().map(S3ObjectSummary::getKey).toList();
+    } catch (CustomException exception) {
+      throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
+    }
   }
 
   public URL presignedUrl(String key) {
-    expiration.setTime(EXPIRE_DURATION);
-    GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, key)
-        .withMethod(HttpMethod.GET)
-        .withExpiration(expiration);
-    return amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+    try {
+      expiration.setTime(EXPIRE_DURATION);
+      GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, key)
+          .withMethod(HttpMethod.GET)
+          .withExpiration(expiration);
+      return amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
+    } catch (CustomException exception) {
+      throw new CustomException(ErrorDetail.S3_CONNECT_FAILED);
+    }
   }
 }

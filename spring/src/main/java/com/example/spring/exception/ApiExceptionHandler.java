@@ -11,6 +11,11 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler({CustomException.class})
   protected ResponseEntity<CustomErrorResponse> handleApiException(CustomException ex) {
-    return new ResponseEntity<>(new CustomErrorResponse(ex.getErrorCode(), ex.getStatus(), ex.getMessage(), Instant.now()), ex.getStatus());
+    CustomErrorResponse customException = new CustomErrorResponse();
+    customException.setMessage(ex.getMessage());
+    customException.setErrorCode(ex.getErrorCode());
+    customException.setStatus(ex.getStatus());
+    customException.setTimestamp(Instant.now());
+    return ResponseEntity.status(ex.getErrorCode()).body(customException);
   }
 }

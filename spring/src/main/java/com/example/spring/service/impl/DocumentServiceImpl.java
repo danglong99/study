@@ -6,10 +6,10 @@ import com.example.spring.domain.entity.DocumentInformation;
 import com.example.spring.exception.CustomException;
 import com.example.spring.repository.DocumentRepository;
 import com.example.spring.service.DocumentService;
+import com.example.spring.utils.ErrorDetail;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class DocumentServiceImpl implements DocumentService {
   public DocumentResponseDto getById(String id) {
     Optional<DocumentInformation> documentInformationOpt = documentRepository.findById(id);
     if (documentInformationOpt.isEmpty()) {
-      throw new CustomException(404, HttpStatus.NOT_FOUND, "Document not found");
+      throw new CustomException(ErrorDetail.DOCUMENT_NOT_FOUND);
     }
     return modelMapper().map(documentInformationOpt.get(), DocumentResponseDto.class);
   }
@@ -50,7 +50,7 @@ public class DocumentServiceImpl implements DocumentService {
   public DocumentInformation update(String id, DocumentRequestDto documentRequestDto) {
     Optional<DocumentInformation> documentInformationOpt = documentRepository.findById(id);
     if (documentInformationOpt.isEmpty()) {
-      throw new CustomException(404, HttpStatus.NOT_FOUND, "Document not found");
+      throw new CustomException(ErrorDetail.DOCUMENT_NOT_FOUND);
     }
     modelMapper().map(documentRequestDto, documentInformationOpt.get());
     return documentRepository.save(documentInformationOpt.get());
