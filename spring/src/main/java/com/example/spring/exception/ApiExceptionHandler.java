@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.Instant;
-import java.time.ZoneId;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
