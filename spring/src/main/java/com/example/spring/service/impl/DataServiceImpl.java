@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,5 +66,10 @@ public class DataServiceImpl implements DataService {
   @Override
   public void delete(Integer id) {
     dataRepository.deleteById(id);
+  }
+
+  @Scheduled(cron = "0 0 0 * * *")
+  public static void executor() {
+
   }
 }
