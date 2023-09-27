@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  app:
+    image: 'danglong:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - mysql
+      - mongodb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/test
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=danglong99
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DATA_MONGODB_HOST=localhost
+      - SPRING_DATA_MONGODB_PORT=27017
+
+  mysql:
+    image: 'mysql'
+    restart: always
+    container_name: db
+    environment:
+      - MYSQL_ROOT_PASSWORD=danglong99
+    ports:
+      - "3306:3306"
+
+  mongodb:
+    image: 'mongo'
+    ports:
+      - "27017:27017"
