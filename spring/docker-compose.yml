@@ -5,7 +5,7 @@ services:
     image: 'danglong:latest'
     build:
       context: .
-    container_name: app
+    container_name: danglong
     depends_on:
       - mysql
       - mongodb
@@ -20,7 +20,6 @@ services:
   mysql:
     image: 'mysql'
     restart: always
-    container_name: db
     environment:
       - MYSQL_ROOT_PASSWORD=danglong99
     ports:
