@@ -1,31 +1,44 @@
 version: '2'
 
 services:
-  app:
+  danglong:
     image: 'danglong:latest'
     build:
       context: .
     container_name: danglong
+    ports:
+      - "8080:8080"
     depends_on:
-      - mysql
-      - mongodb
+      - mysqldb
+      - mongo
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/test
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=danglong99
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_DATA_MONGODB_HOST=localhost
-      - SPRING_DATA_MONGODB_PORT=27017
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/test
+      SPRING_DATA_MONGODB_HOST: mongo
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: danglong99
+    restart:
+      always
+    networks:
+      - danglong
 
-  mysql:
+  mysqldb:
     image: 'mysql'
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=danglong99
+      - MYSQL_DATABASE=test
     ports:
-      - "3306:3306"
+      - "3307:3306"
+    networks:
+      - danglong
 
-  mongodb:
+  mongo:
     image: 'mongo'
     ports:
       - "27017:27017"
+    networks:
+      - danglong
+
+networks:
+  danglong:

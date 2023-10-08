@@ -45,7 +45,7 @@ public class SecurityConfig {
         .authorizeHttpRequests()
         .anyRequest().authenticated();
      httpSecurity
-         .addFilterBefore(new JwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+         .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     return httpSecurity.build();
   }
 }
