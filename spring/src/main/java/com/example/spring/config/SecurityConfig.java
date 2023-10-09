@@ -3,6 +3,7 @@ package com.example.spring.config;
 import com.example.spring.jwt.JwtTokenFilter;
 import com.example.spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -23,18 +25,25 @@ public class SecurityConfig {
   private UserRepository userRepo;
   @Autowired
   private JwtTokenFilter jwtTokenFilter;
+
+  @Autowired
+  @Qualifier("customAuthenticationEntryPoint")
+  AuthenticationEntryPoint authenticationEntryPoint;
+
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
+
   @Bean
   public AuthenticationManager authenticationManager(
       AuthenticationConfiguration authConfig) throws Exception {
     return authConfig.getAuthenticationManager();
   }
+
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-     httpSecurity
+    httpSecurity
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .csrf().disable().cors().disable()
         .authorizeHttpRequests()
@@ -43,9 +52,11 @@ public class SecurityConfig {
         .requestMatchers("/user/register/**").permitAll()
         .and()
         .authorizeHttpRequests()
-        .anyRequest().authenticated();
-     httpSecurity
-         .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        .anyRequest().authenticated()
+        .and()
+        .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+    httpSecurity
+        .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     return httpSecurity.build();
   }
 }
